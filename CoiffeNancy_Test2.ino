@@ -1,4 +1,5 @@
 #include "FastLED.h"
+#include <avr/power.h>
 
 #define NUM_STRIPS 2
 #define NUM_LEDS_PER_STRIP 20
@@ -9,6 +10,8 @@ CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
 // For mirroring strips, all the "special" stuff happens just in setup.  We
 // just addLeds multiple times, once for each strip
 void setup() {
+      delay( 3000 ); // power-up safety delay
+      clock_prescale_set(clock_div_2);
       FastLED.addLeds<NEOPIXEL, 9>(leds, 6);
       FastLED.addLeds<WS2801, 3, 2, RGB>(leds,20);
 }

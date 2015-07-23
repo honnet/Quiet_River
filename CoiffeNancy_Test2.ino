@@ -1,51 +1,59 @@
 #include "FastLED.h"
 #include <avr/power.h>
 
-#define NUM_STRIPS 2
-#define NUM_LEDS_PER_STRIP 20
-#define NUM_LEDS NUM_LEDS_PER_STRIP * NUM_STRIPS
+const int NUM_LEDS_RINGS  = 16;     /* 2 rings but controled similarly */
+const int RINGS_DATA      = 9;
 
-CRGB leds[NUM_STRIPS * NUM_LEDS_PER_STRIP];
+const int NUM_LEDS_STRIPS = 20;     /* 2 strips of 10 LEDs */
+const int STRIPS_CLOCK    = 2;
+const int STRIPS_DATA     = 3;
 
-// For mirroring strips, all the "special" stuff happens just in setup.  We
-// just addLeds multiple times, once for each strip
+
+//CRGB led_rings[NUM_LEDS_RINGS];
+CRGB led_strips[NUM_LEDS_STRIPS];
+
 void setup() {
-      delay( 3000 ); // power-up safety delay
-      clock_prescale_set(clock_div_2);
-      FastLED.addLeds<NEOPIXEL, 9>(leds, 6);
-      FastLED.addLeds<WS2801, 3, 2, RGB>(leds,20);
+    delay( 3000 ); // power-up safety delay
+    clock_prescale_set(clock_div_2);
+
+//  FastLED.addLeds<NEOPIXEL, RINGS_DATA>(led_rings, NUM_LEDS_RINGS);
+    FastLED.addLeds<WS2801, STRIPS_DATA, STRIPS_CLOCK, BGR>(led_strips, NUM_LEDS_STRIPS);
 }
 
+// Colors available: 0 red; 32 orange; 64 yellow; 96 green;
+// 128 aqua; 160 blue; 192 purple; 224 pink; 255 red
 void loop() {
-      // Colour Fade between colour 1 to colour 2 and back again
-      // all leds fade through colours specificed (0 red; 32 orange; 64 yellow; 96 green; 128 aqua; 160 blue; 192 purple; 224 pink; 255 red)
-      colour_fade(160, 255, 50);
+    const int aqua = 128;
+    const int pink = 224;
+    const int wait = 50;
+
+    color_fade(aqua, pink, wait);
 }
 
-void colour_fade(uint16_t startColour, uint16_t endColour, uint8_t wait)  //start HSV colour, end HSV colour, delay
-{  
+//start HSV color, end HSV color, delay
+void color_fade(uint16_t startColor, uint16_t endColor, uint8_t wait) {
+    FastLED.clear();
 
-       FastLED.clear();
+    //loop around a color range from startColor to endColor
+    for(int color = startColor; color < endColor; color++)
+        push(color, wait);
 
-       for(int myColour = startColour; myColour < endColour; myColour++) //loop around a colour range from startColour to endColour
-       {
-         for(int dot = 0; dot < NUM_LEDS; dot++) // this loop ensures each "dot" up to the number of LEDs are all changed
-          { 
-          leds[dot].setHSV(myColour, 255, 255);  // set hue=myColour, Saturation = 255, Brightness = 255
-          }
-          FastLED.show();  // update the LEDs
-          delay(wait);
-       }
-       
-       for(int myColour = endColour; myColour > startColour; myColour--) //loop around a colour range from the end back to the start
-       {
-         for(int dot = 0; dot < NUM_LEDS; dot++) // this loop ensures each "dot" up to the number of LEDs are all changed
-          { 
-          leds[dot].setHSV(myColour, 255, 255);  // set hue=myColour, Saturation = 255, Brightness = 255
-          }
-          FastLED.show();  // update the LEDs
-          delay(wait);
-       }
-
-  return;
+    //loop around a color range from the end back to the start
+    for(int color = endColor; color > startColor; color--)
+        push(color, wait);
 }
+
+// ensures each "dot" up to the number of LEDs are all changed
+inline void push(int color, uint8_t wait) {
+    // set hue=color, Saturation = 255, Brightness = 127
+    for(int dot = 0; dot < NUM_LEDS_STRIPS; dot++)
+        led_strips[dot].setHSV(color, 255, 127);
+    FastLED.show();  // update the LEDs
+
+//  for(int dot = 0; dot < NUM_LEDS_RINGS; dot++)
+//      led_rings[dot].setHSV(color, 255, 127);
+//  FastLED.show();  // update the LEDs
+
+    delay(wait);
+}
+

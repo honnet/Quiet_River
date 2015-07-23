@@ -1,5 +1,4 @@
 #include "FastLED.h"
-#include <avr/power.h>
 
 const int NUM_LEDS_RINGS  = 16;     /* 2 rings but controled similarly */
 const int RINGS_DATA      = 9;
@@ -14,7 +13,6 @@ CRGB led_strips[NUM_LEDS_STRIPS];
 
 void setup() {
     delay( 3000 ); // power-up safety delay
-    clock_prescale_set(clock_div_2);
 
 //  FastLED.addLeds<NEOPIXEL, RINGS_DATA>(led_rings, NUM_LEDS_RINGS);
     FastLED.addLeds<WS2801, STRIPS_DATA, STRIPS_CLOCK, BGR>(led_strips, NUM_LEDS_STRIPS);
@@ -54,6 +52,6 @@ inline void push(int color, uint8_t wait) {
 //      led_rings[dot].setHSV(color, 255, 127);
 //  FastLED.show();  // update the LEDs
 
-    delay(wait);
+    FastLED.delay(wait);
 }
 

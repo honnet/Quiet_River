@@ -1,20 +1,20 @@
 #include "FastLED.h"
 
-const int NUM_LEDS_RINGS  = 16;     /* 2 rings but controled similarly */
-const int RINGS_DATA      = 9;
+const int NUM_LEDS_RINGS  = 7;     /* 2 rings but controled similarly */
+const int RINGS_DATA      = 11;
 
 const int NUM_LEDS_STRIPS = 20;     /* 2 strips of 10 LEDs */
 const int STRIPS_CLOCK    = 2;
 const int STRIPS_DATA     = 3;
 
 
-//CRGB led_rings[NUM_LEDS_RINGS];
+CRGB led_rings[NUM_LEDS_RINGS];
 CRGB led_strips[NUM_LEDS_STRIPS];
 
 void setup() {
     delay( 3000 ); // power-up safety delay
 
-//  FastLED.addLeds<NEOPIXEL, RINGS_DATA>(led_rings, NUM_LEDS_RINGS);
+    FastLED.addLeds<NEOPIXEL, RINGS_DATA>(led_rings, NUM_LEDS_RINGS);
     FastLED.addLeds<WS2801, STRIPS_DATA, STRIPS_CLOCK, BGR>(led_strips, NUM_LEDS_STRIPS);
 }
 
@@ -48,9 +48,9 @@ inline void push(int color, uint8_t wait) {
         led_strips[dot].setHSV(color, 255, 127);
     FastLED.show();  // update the LEDs
 
-//  for(int dot = 0; dot < NUM_LEDS_RINGS; dot++)
-//      led_rings[dot].setHSV(color, 255, 127);
-//  FastLED.show();  // update the LEDs
+    for(int dot = 0; dot < NUM_LEDS_RINGS; dot++)
+        led_rings[dot].setHSV(color, 255, 127);
+    FastLED.show();  // update the LEDs
 
     FastLED.delay(wait);
 }

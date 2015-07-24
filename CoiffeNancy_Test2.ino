@@ -1,12 +1,17 @@
 #include "FastLED.h"
 
-const int NUM_LEDS_RINGS  = 7;     /* 2 rings but controled similarly */
+const int NUM_LEDS_RINGS  = 16;     /* 2 rings but controled similarly */
 const int RINGS_DATA      = 11;
-
 const int NUM_LEDS_STRIPS = 20;     /* 2 strips of 10 LEDs */
-const int STRIPS_CLOCK    = 2;
-const int STRIPS_DATA     = 3;
 
+#define LILI_USB
+#ifdef LILI_USB
+    const int STRIPS_CLOCK    = 2;
+    const int STRIPS_DATA     = 3;
+#else
+    const int STRIPS_CLOCK    = A5;
+    const int STRIPS_DATA     = A3;
+#endif
 
 CRGB led_rings[NUM_LEDS_RINGS];
 CRGB led_strips[NUM_LEDS_STRIPS];
